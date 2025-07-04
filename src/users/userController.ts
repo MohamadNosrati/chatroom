@@ -3,11 +3,14 @@ import catchAsync from "../llb/tools/catchAsync";
 import UserModel from "./userModel";
 
 export const getAllUsers = catchAsync(async (req: Request, res: Response) => {
+  console.log("handler");
   const users = await UserModel.find();
-   res.status(200).json({
+  res.status(200).json({
     staus: 200,
     message: "users list",
-    users: users,
+    data: {
+      users: users,
+    },
   });
 });
 
@@ -35,6 +38,7 @@ export const deleteUser = (req: Request, res: Response) => {
 };
 
 export const updateUser = (req: Request, res: Response) => {
+  console.log("request headers", req.headers);
   res.status(200).json({
     staus: 200,
     message: "users updated succesfully!",

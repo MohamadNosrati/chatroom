@@ -3,6 +3,9 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import userRouter from "./src/users/userRoutes";
 import AppError from "./src/llb/tools/appError";
+import roleRouter from "./src/roles/routes";
+import permissionRouter from "./src/permissions/routes";
+import cors from "cors";
 
 dotenv.config({
   path: "./config.env",
@@ -10,10 +13,13 @@ dotenv.config({
 
 const app = express();
 
+app.use(cors())
 app.use(express.json());
 app.use(morgan("dev"));
 
 app.use("/users", userRouter);
+app.use("/roles", roleRouter);
+app.use("/permissions", permissionRouter);
 
 app.all("/{*any}", (req: Request, res: Response, next: NextFunction) => {
   res.status(404).json({
@@ -23,6 +29,10 @@ app.all("/{*any}", (req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use((err: AppError, req: Request, res: Response, next: NextFunction) => {
+  if(err.name === "JsonWebTokenError"){
+    err.message = "invliad token - login please!",
+    err.status = 401 
+  }
   err.status = err.status || 500;
   err.message = err.message || "server error!"  
   res.status(err.status).json({

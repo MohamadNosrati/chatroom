@@ -7,6 +7,7 @@ import tokenCreator from "../llb/tools/tokenCreator";
 import AppError from "../llb/tools/appError";
 
 export const signUp = catchAsync(async (req: Request, res: Response) => {
+  console.log("body", req.body);
   const { email, userName, password } = req.body;
   const hashedPassword = await bcrypt.hash(
     password,
@@ -22,8 +23,10 @@ export const signUp = catchAsync(async (req: Request, res: Response) => {
   res.status(201).json({
     status: 201,
     message: "user signed up successfully",
-    user: newUser,
-    token: token,
+    data: {
+      user: newUser,
+      token: token,
+    },
   });
 });
 
@@ -31,7 +34,8 @@ export const signIn = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
     const user = await UserModel.findOne({ email: email });
-    const isPasswordCorrect = user && await bcrypt.compare(password, user.password);
+    const isPasswordCorrect =
+      user && (await bcrypt.compare(password, user.password));
     if (!user || !isPasswordCorrect) {
       return next(
         new AppError(400, "there no user with this email or password")
@@ -39,10 +43,12 @@ export const signIn = catchAsync(
     }
     const token = await tokenCreator(user?._id);
     res.status(200).json({
-      status: 201,
+      status: 200,
       message: "user signed in successfully",
-      user: user,
-      token: token,
+      data: {
+        user: user,
+        token: token,
+      },
     });
   }
 );
