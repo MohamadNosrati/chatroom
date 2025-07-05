@@ -33,7 +33,7 @@ export const signUp = catchAsync(async (req: Request, res: Response) => {
 export const signIn = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
-    const user = await UserModel.findOne({ email: email });
+    const user = await UserModel.findOne({ email: email }).select("+password");
     const isPasswordCorrect =
       user && (await bcrypt.compare(password, user.password));
     if (!user || !isPasswordCorrect) {

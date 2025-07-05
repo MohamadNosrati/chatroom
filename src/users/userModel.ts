@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema<IUser>(
       required: [true, "password field is required"],
       type: String,
       minlength: [8, "password field must be at least 8 characters!"],
+      select:false
     },
     role: {
       required: [true, "role field is required"],
@@ -28,10 +29,21 @@ const userSchema = new mongoose.Schema<IUser>(
         message: "role field must be super-admin or admin  or editor or user",
       },
     },
+    isActive:{
+      type:Boolean,
+      default :true,
+    }
   },
   {
     timestamps: true,
-    versionKey:false,
+    versionKey: false,
+    toJSON: {
+      transform: function (doc, ret) {
+        ret.id = ret._id; // Assign _id value to a new 'id' property
+        delete ret._id; // Remove the original _id property
+        return ret;
+      },
+    },
   }
 );
 

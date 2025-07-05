@@ -14,7 +14,6 @@ const authentication = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log(req.headers)
   if (
     !req.headers.authorization ||
     typeof req.headers?.authorization !== "string"
