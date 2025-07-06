@@ -4,9 +4,7 @@ import UserModel from "./userModel";
 import ApiFeatures from "../llb/tools/apiFeatures";
 
 export const getAllUsers = catchAsync(async (req: Request, res: Response) => {
-  if(req.query.isActive){
-    console.log("truuuuuuuuuu")
-  }
+  console.log("handlerrrrrr")
   const query = new ApiFeatures(UserModel.find(),req.query).filtering().pagination().sorting();
   const users = await query.query;
   res.status(200).json({
